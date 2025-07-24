@@ -3,7 +3,7 @@ from typing import List
 from fastapi import FastAPI
 from pydantic import BaseModel
 from starlette.responses import JSONResponse
-
+from starlette.requests import Request
 app = FastAPI()
 @app.get("/hello")
 def greeting():
@@ -17,7 +17,20 @@ def welcome_name(name : str):
 def list_student():
     return JSONResponse({"message" : serialized_student_list()}, status_code=200)
 
-
+@app.get("/students-authorized")
+def list_student(request: Request):
+    auth_header = request.headers.get("Authorization")
+    if auth_header:
+        return JSONResponse(
+            status_code=403,
+            content={"error": "Vous n'êtes pas autorisé à accéder à la ressource demandée"}
+        )
+    if auth_header != "bon courage":
+        return JSONResponse(
+            status_code=403,
+            content={"error": "Vous n'avez pas les permisions necessaires pour accéder à la ressource demandée"}
+        )
+    return JSONResponse({"message" : serialized_student_list()}, status_code=200)
 class StudentModel(BaseModel):
     Reference: str
     FirstName: str
