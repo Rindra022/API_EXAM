@@ -13,6 +13,9 @@ def greeting():
 def welcome_name(name : str):
     return JSONResponse({"message": f"Hello {name}"}, status_code=200)
 
+@app.get("/students")
+def list_student():
+    return JSONResponse({"message" : serialized_student_list()}, status_code=200)
 
 
 class StudentModel(BaseModel):
@@ -31,3 +34,17 @@ def serialized_student_list():
 def add_list_events(events : List[StudentModel]):
     student_list.extend(events)
     return JSONResponse({"message" : serialized_student_list()}, status_code=201)
+    # existing_std
+@app.put("/students")
+def edit_events(students : List[StudentModel]):
+    for new_student in students:
+        for i, existing_std in enumerate(student_list):
+            if existing_std.Reference == new_student.Reference:
+                student_list[i] = new_student
+                break
+            else:
+                student_list.append(new_student)
+    # return events_store
+    return {"students": student_list}
+
+
