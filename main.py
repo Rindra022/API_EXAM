@@ -44,7 +44,6 @@ def edit_events(students : List[StudentModel]):
                 break
             else:
                 student_list.append(new_student)
-    # return events_store
     return {"students": student_list}
 
 
